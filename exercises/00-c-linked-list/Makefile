@@ -6,6 +6,6 @@ clean :
 
 all : exercise1 exercise2
 
-exercise1 : exercise1.o list.o
-exercise2 : exercise2.o list.o
+exercise1 : exercise1.o list.o test.o
+exercise2 : exercise2.o list.o test.o
 

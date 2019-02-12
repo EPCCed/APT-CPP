@@ -15,7 +15,7 @@ void list_delete(list*);
 node* list_front(list*);
 node* list_back(list*);
 
-data_t* list_data(node*);
+data_t list_data(node*);
 
 // Get the next node in the list or NULL if there is none
 node* list_node_next(node*);
