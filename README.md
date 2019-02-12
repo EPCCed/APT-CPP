@@ -22,4 +22,4 @@ parallel performance which are commonly implemented in C++.
 The course would appeal to existing C++ programmers wanting to learn
 
 * [Lectures](lectures/)
-* [Practicals](practicals/)
+* [Practical exercises](exercises/)
