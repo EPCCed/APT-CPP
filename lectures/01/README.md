@@ -388,7 +388,7 @@ float Complex::magnitude() const {
 
 ```C++
 float Complex::magnitude() const {
-return sqrt(this->real*this->real + this->imag*this->imag);
+  return sqrt(this->real*this->real + this->imag*this->imag);
 }
 ```
 ---
@@ -412,9 +412,9 @@ To let this function touch the private members of the class, we must
 declare that it is a `friend`:
 
 ```C++
-    class Complex {
-      // ...
-      friend Complex operator+(const Complex&, const Complex&);
+class Complex {
+  // ...
+  friend Complex operator+(const Complex&, const Complex&);
 };
 ```
 
@@ -756,4 +756,4 @@ with C++ and improving this Array template.
 You will then try using the STL: the standard template library
 instead.
 
-See the repository @TRAINING_REPO_URL@
+See the repository https://github.com/EPCCed/APT-CPP
