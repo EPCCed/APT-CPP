@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 #include "Array.hpp"
 #include "util.hpp"
@@ -32,20 +33,11 @@ int main(int argc, char** argv) {
     auto x = rand(1000);
     
     // find insertion point
-    unsigned j;
-    for(j = 0; j != i; ++j) {
-      if (data[j] >= x)
-	break;
-    }
+    auto j = std::lower_bound(&data[0], &data[0]+i, x) - &data[0];
     
-    // insert
-    
-    // First, shift all elements [j, i) up one (starting at the back
-    // to avoid overwriting
-    for (unsigned k = i; k != j; --k) {
-      data[k] = data[k-1];
-    }
-    
+    // Shift all elements [j, i) up one (starting at the back to avoid
+    // overwriting
+    std::copy_backward(&data[j], &data[i], &data[i+1]);
     // Add the new value
     data[j] = x;
   }

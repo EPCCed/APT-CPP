@@ -41,8 +41,13 @@ list::node* list::push_front(const data_t& d) {
 
 // Implement this member function
 list::node* list::insert_before(node* will_be_next, const data_t& d) {
-    std::cout << "Implement insert_before!" << std::endl;
-    assert(false);
+  // Create new node
+  std::cout << "Implement insert_before!" << std::endl;
+  assert(false);
+
+  // stitch into existing list
+
+
 }
 
 // Remove the first element from the list (if it exists)

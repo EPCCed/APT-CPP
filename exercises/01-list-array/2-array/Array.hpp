@@ -1,5 +1,6 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
+#include <algorithm>
 
 template <class T>
 class Array {
@@ -47,12 +48,16 @@ Array<T>::Array(unsigned n) : _size(n) {
 
 // Copy c'tor
 template<class T>
-Array<T>::Array(const Array& other) {
+Array<T>::Array(const Array& other) : Array(other._size) {
+  std::copy(other._data, other._data + _size,
+	    _data);
 }
 
 // Move c'tor
 template<class T>
 Array<T>::Array(Array&& other) : Array() {
+  std::swap(_size, other._size);
+  std::swap(_data, other._data);
 }
 
 // D'tor
@@ -64,11 +69,19 @@ Array<T>::~Array() {
 // Copy assignment
 template<class T>
 auto Array<T>::operator=(const Array& other) -> Array& {
+  _size = other._size;
+  delete[] _data;
+  _data = new T[_size];
+  std::copy(other._data, other._data + _size,
+	    _data);
+  return *this;
 }
 
 // Move assignment
 template<class T>
 auto Array<T>::operator=(Array&& other) -> Array& {
+  std::swap(_size, other._size);
+  std::swap(_data, other._data);
 }
 
 // Const element access

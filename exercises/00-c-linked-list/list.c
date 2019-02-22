@@ -58,7 +58,7 @@ node* list_insert_after(list* lst, node* before, const data_t d) {
 // Add the data to a new node before this one
 node* list_insert_before(list* lst, node* after, const data_t d) {
   // argument will after the new node
-  
+
 
 
 
