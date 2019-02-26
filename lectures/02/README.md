@@ -15,7 +15,7 @@ template: titleslide
 
 Writing efficient software, more than anything, requires you to choose an appropriate algorithmic approach for your problem.
 
-For lots on how to do this well, take Parallel Design Patterns next semester!
+For lots on how to do this well, consider the Parallel Design Patterns course.
 
 Here we want to take a lower-level approach and talk about how to implement patterns efficiently using C++.
 
@@ -147,10 +147,10 @@ Consider converting to `vector` if you have a build/access pattern.)
 
 -   will be looking up unpredictable values a lot or frequently
     adding/removing values.
-	)
-	
+    )
+
 ---
-	
+
 # set and map
 
 For example, describing your communication pattern between MPI ranks with a domain decomposed problem
@@ -164,13 +164,13 @@ For example, describing your communication pattern between MPI ranks with a doma
 std::map<int, BoundaryComm> rank2comms;
 for (auto p =0; p != MPI_COMM_SIZE; ++p) {
   if (ShareBoundaryWithRank(p)) {
-	rank2comms[p] = BoundaryComm(my_rank, p);
+    rank2comms[p] = BoundaryComm(my_rank, p);
   }
 }
 // later
 for (auto iter = rank2comms.begin(),
-		  end = rank2comms.end();
-	 iter != end; ++iter) {
+          end = rank2comms.end();
+     iter != end; ++iter) {
   auto& bc = iter->second;
   bc->SendData(local_data);
 }
@@ -190,8 +190,6 @@ for (auto iter = rank2comms.begin(),
 > Leave a comment to explain if you choose from the rest  
 
 Credit - [Tony van Eerd](https://twitter.com/tvaneerd) @ [CppCon 2017](https://youtu.be/QTLn3goa3A8?t=332)
-
----
 
 ---
 template:titleslide
@@ -222,12 +220,16 @@ for (auto ptr = start; ptr != stop; ++ptr) {
 
 # Iteration
 
-These three humble pointers can implement the concept of
-traversing every element in the array (in order).
+These three humble pointers can implement the concept of traversing
+every element in the array (in order).
 
-They also model the concept of an *iterator* which is a vital for using the standard library effectively.
+They also model the concept of an **iterator** which is a vital for
+using the standard library effectively.
 
-There are a few different categories of iterator (forward, backward, random, etc) but they all can traverse the elements of something (e.g. a container, data in a file, input from keyboard) and provide access to them.
+There are a few different categories of iterator (forward, backward,
+random, etc) but they all can traverse the elements of something
+(e.g. a container, data in a file, input from keyboard) and provide
+access to them.
 
 ---
 
@@ -236,10 +238,9 @@ A C++ equivalent of the previous might be:
 
 ```C++
 std::vector<double> data = GetData(n);
-for (std::vector<double>::iterator iter 
-								= data.begin();
-	 iter != data.end();
-	 ++iter) {
+for (std::vector<double>::iterator iter = data.begin();
+     iter != data.end();
+     ++iter) {
   *iter *= 2;
 }
 ```
@@ -250,7 +251,7 @@ Or equivalently
 ```C++
 std::vector<double> data = GetData(n);
 for (auto iter = data.begin();
-	 iter != data.end(); ++iter) {
+     iter != data.end(); ++iter) {
   *iter *= 2;
 }
 ```
@@ -268,7 +269,7 @@ traversing it, and also from the operations we apply to it.
 template <class ItT>
 void doubleInPlace(ItT start, ItT end) {
   for (auto iter = start; iter != end; ++iter)
-	*iter *= 2;
+    *iter *= 2;
 }
 
 std::vector<double> data = GetData(100);
@@ -289,18 +290,21 @@ All the STL containers contain two iterator types, for example:
 
 -   `std::list<char>::const_iterator` - if the instance is `const` you
     get one of these from `begin()`/`end()`, if non-const, you can get
-    one with `cbegin()`/`cend`.
+    one with `cbegin()`/`cend()`.
 
 
 You can also get iterators from e.g. `std::map<KeyT, ValT>::find(search_key)`, which will give and iterator pointing to the element you want or to the `end()`.
 
-Note that an iterator pointing to the end is not valid! Dereferencing it may have undefined behaviour\...
+Note that an iterator pointing to the end is not valid! Dereferencing
+has undefined behaviour.
 
 ---
 
 # Implementing your own iterator
 
-To define your own iterator, you need to create a class with several overloads (exactly which one depends on the category of iterator you need).
+To define your own iterator, you need to create a class with several
+operator overloads (exactly which ones depends on the category of
+iterator you need).
 
 -   derefence operator (`*it`) - you have to be able to get a value
     (either to read or write)
@@ -311,12 +315,10 @@ one
     value of `it` from *before* it was incremented. This usually means
     a copy.)
 
-    	
 -   assigment - you need to bind it to name
 
 -   inequality comparison (`it `= end!) - you need to know when you are
 done
-
 
 ![:fn_show]( )
 
@@ -324,13 +326,15 @@ done
 
 # Range for loop
 
-Any class instance with `begin()` and `end()` member functions that return iterators can be used in a range based for-loop.
+Any type with `begin()` and `end()` member functions that return
+iterators can be used in a range based for-loop.
 
 ```C++
 std::vector<int> primes = getPrimes(5);
 for (auto p : primes) {
-  std << p << " " << std::endl;
+  std::cout << p << " ";
 }
+std::cout << std::endl;
 // 2 3 5 7 11 
 ```
 
@@ -346,11 +350,11 @@ approximating the following
 {
   auto&& _range = <range expression>; 
   for (auto _begin = _range.begin(),
-			_end = _range.end();
-	   _begin != _end;
-	   ++_begin) { 
-	<range declaration> = *_begin;
-	<loop body> 
+            _end = _range.end();
+       _begin != _end;
+       ++_begin) {
+    <range declaration> = *_begin;
+    <loop body>
   }
 }
 ```
@@ -372,11 +376,11 @@ int main(int argc, char** argv) {
   int size = std::atoi(argv[1]);
   std::vector<float> data(size);
   for (auto& el: data)
-	el = rand(1000);
+    el = rand(1000);
   Timer t;
   scale(data.data(), data.size(), 0.5);
   std::cout << size << ", " 
-			<< t.GetSeconds() << std::endl;
+            << t.GetSeconds() << std::endl;
 }
 ```
 
@@ -400,15 +404,15 @@ C-style loop:
 
 ```x86asm
 LBB4_6:
-	movups	-16(%rdx), %xmm2
-	movups	(%rdx), %xmm3
-	mulps	%xmm1, %xmm2
-	mulps	%xmm1, %xmm3
-	movups	%xmm2, -16(%rdx)
-	movups	%xmm3, (%rdx)
-	addq	$32, %rdx
-	addq	$-8, %rcx
-	jne	LBB4_6
+    movups  -16(%rdx), %xmm2
+    movups  (%rdx), %xmm3
+    mulps   %xmm1, %xmm2
+    mulps   %xmm1, %xmm3
+    movups  %xmm2, -16(%rdx)
+    movups  %xmm3, (%rdx)
+    addq    $32, %rdx
+    addq    $-8, %rcx
+    jne LBB4_6
 ```
 ]
 
@@ -416,22 +420,22 @@ LBB4_6:
 Range-based loop:
 ```x86asm
 LBB4_5:
-	movups	(%rax,%rsi,4), %xmm2
-	movups	16(%rax,%rsi,4), %xmm3
-	movups	32(%rax,%rsi,4), %xmm4
-	movups	48(%rax,%rsi,4), %xmm5
-	mulps	%xmm1, %xmm2
-	mulps	%xmm1, %xmm3
-	movups	%xmm2, (%rax,%rsi,4)
-	movups	%xmm3, 16(%rax,%rsi,4)
-	mulps	%xmm1, %xmm4
-	mulps	%xmm1, %xmm5
-	movups	%xmm4, 32(%rax,%rsi,4)
-	movups	%xmm5, 48(%rax,%rsi,4)
-	addq	$16, %rsi
-	addq	$2, %rdi
-	jne	LBB4_5
-	```
+    movups  (%rax,%rsi,4), %xmm2
+    movups  16(%rax,%rsi,4), %xmm3
+    movups  32(%rax,%rsi,4), %xmm4
+    movups  48(%rax,%rsi,4), %xmm5
+    mulps   %xmm1, %xmm2
+    mulps   %xmm1, %xmm3
+    movups  %xmm2, (%rax,%rsi,4)
+    movups  %xmm3, 16(%rax,%rsi,4)
+    mulps   %xmm1, %xmm4
+    mulps   %xmm1, %xmm5
+    movups  %xmm4, 32(%rax,%rsi,4)
+    movups  %xmm5, 48(%rax,%rsi,4)
+    addq    $16, %rsi
+    addq    $2, %rdi
+    jne LBB4_5
+    ```
 ]
 ]
 
@@ -490,15 +494,16 @@ class JpegFile {
   unique_ptr<char> _pixeldata;
 public:
   JpegFile(string fn) : _fn(fn) {
-	 // read _nx/_ny/_ncols from header
-	_pixeldata = new char[_nx*_ny*3];
-	// decompress data from file
+     // read _nx/_ny/_ncols from header
+    _pixeldata = new char[_nx*_ny*3];
+    // decompress data from file
   }
   char& GetPixel(int x, int y) {
-	return _pixeldata[x*_ny + y];
+    return _pixeldata[x*_ny + y];
   }
 };
 ```
+
 ---
 
 # Inheritance
@@ -510,6 +515,7 @@ Might want to do the same for each one, but:
 -   code duplication :(
 
 -   the types are totally unrelated :(
+
 ---
 
 # Inheritance
@@ -534,13 +540,14 @@ public:
 # Inheritance
 
 So instead create a base class and several derived classes
+
 ```C++
 class JpegFile : public ImageFile {
 public:
   JpegFile(string fn) : ImageFile(fn) {
-	// read _nx/_ny/_ncols from header
-	_pixeldata = new char[_nx*_ny*3];
-	// decompress data from file
+    // read _nx/_ny/_ncols from header
+    _pixeldata = new char[_nx*_ny*3];
+    // decompress data from file
   }
 };
 
@@ -574,23 +581,24 @@ ImageFile& im_ref = jpg;
 -   We ideally want to have a uniform interface and when we call it as
     run time the pointer-to-base knows which subclass method to call.
 
--   Enter virtual functions!
+-   Enter virtual functions
 
 ---
 
 # Dynamic polymorphism
+
 ```C++
 class ImageFile {
 public:
- virtual void Write(string fn} = 0;
+ virtual void Write(const string& fn) = 0;
 };
 
 class JpegFile : public ImageFile {
 public:
-	virtual void Write(string fn) {
-	  // write header
-	  // compress + write data
-	}
+    virtual void Write(const string& fn) {
+      // write header
+      // compress + write data
+    }
 };
 ImageFile* img = new JpegFile("cat.jpg");
 img->Write("notdog.jpg");
