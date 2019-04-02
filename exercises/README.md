@@ -8,3 +8,4 @@ See each subdirectory for further instructions
 * [01 C++ linked list and array](01-list-array/)
 * [02 Morton-order matrices](02-morton-order/)
 * [03 C++ threads](03-c++threads/)
+* [Kokkos](kokkos/)
