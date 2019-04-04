@@ -262,7 +262,7 @@ a growing ecosystem.
 HPC's favourite simple test, saxpy (single precision `a*x + y`)
 
 ```C++
-kokkos::parallel_for(N,
+Kokkos::parallel_for(N,
   KOKKOS_LAMBDA(int i) {
 	y(i) = a * x(i) + y(i);
   });
