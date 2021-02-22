@@ -21,6 +21,8 @@ Let's talk a bit about memory first
 ---
 # Memory: overview
 
+.columns[
+.col[
 Modern OSes given each process a flat address space
 
 Each byte can be read by its address which is just a number.
@@ -28,6 +30,13 @@ Each byte can be read by its address which is just a number.
 For most purposes this can be considered in two parts:
 - stack
 - heap
+]
+.col[
+.center[
+![:scale_img 50%](mem_layout.jpg)
+]
+]
+]
 
 ---
 # Memory: stack
@@ -197,7 +206,7 @@ class dyn_array {
   double* data = nullptr;
 public:
   dyn_array() = default;
-  dyn_array(unsigned n) : size(n) data(new double[size]) {}
+  explicit dyn_array(unsigned n) : size(n), data(new double[size]) {}
   ~dyn_array() {
     delete[] data;
   }
@@ -238,8 +247,9 @@ there is a *copy constructor* or *copy assignment operator*
 Copy constructor - when you create a new object as the destination:
 
 ```C++
-dyn_array x{10};
-dyn_array y = x;
+dyn_array x{10}; // Direct initialisation
+dyn_array y{x}; // Direct initialisation
+dyn_array z = x; // Copy initialization
 ```
 
 --
@@ -260,8 +270,8 @@ by the target object
 ---
 # Implicit copy
 
-The compiler will generate these for us if all the data members of you
-class are copyable.
+The compiler will automatically generate these operations for us if
+all the data members of you class are copyable.
 
 So what went wrong with the example shown?
 
@@ -292,7 +302,7 @@ class dyn_array {
   double* data = nullptr;
 public:
   dyn_array() = default;
-  dyn_array(unsigned n) : size(n) data(new double[size]) {}
+  explicit dyn_array(unsigned n) : size(n) data(new double[size]) {}
   dyn_array(dyn_array const& other) : size(other.size), data(new double[size]) {
     // Copy data
   }
@@ -431,8 +441,8 @@ constructor and copy assignment operators being `delete`d:
 
 ```
 class unique_ptr {
-  unique_ptr(unique_ptr&) = delete;
-  unique_ptr& operator=(unique_ptr&) = delete;
+  unique_ptr(unique_ptr const &) = delete;
+  unique_ptr& operator=(unique_ptr const &) = delete;
 };
 ```
 ???
@@ -450,7 +460,7 @@ The syntax is basically the same as defaulting a special function
 #include <memory>
 
 class Image {
-  Image(std::string const & file) {
+  Image(std::string const& file) {
     // construct by reading from file...
   }
 };
@@ -533,6 +543,7 @@ std::unique_ptr<Image> ReadImage(std::string const& filename) {
 
 int main() {
   auto img_ptr = ReadImage("cats.jpg");
+
 
   auto area = (*img_ptr).x() * (*img_ptr).y();
 }
@@ -639,7 +650,7 @@ public:
   Cowboy(std::string const& n) : name(n) {}
   ~Cowboy() { std::cout << "Delete " << name << std::endl; }
   friend void partner_up(ptr a, ptr b) {
-    a->ptr = b; b->ptr = a;
+    a->partner = b; b->partner = a;
   }
 };
 
@@ -719,7 +730,7 @@ interface - ugh MS Hungarian notation)
 class File {
 private:
   std::unique_ptr<std::FILE> handle = nullptr;
-  explicit File(std::string const& fn, char const* mode) :
+  File(std::string const& fn, char const* mode) :
     handle(std::fopen(fn.c_str(), mode)) {
   }
 public:
@@ -755,4 +766,3 @@ Please use them!
 Could also have a network connection, handle to a GPU command stream
 etc wrapped here.
 
----
