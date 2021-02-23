@@ -8,7 +8,8 @@ template: titleslide
 We've pretty much only talked about working on single things at once
 
 Simulation/analysis usually require us to deal with many things: many
-data points, many atoms in your MD simulation, etc.
+data points, many atoms in your MD simulation, many images to
+recognise objects in etc.
 
 ---
 # Containers
@@ -23,8 +24,8 @@ In C++ a container:
 
 - Provides access to its elements
 
-- The sorts of access and the performance of these operations depends
-  on the container
+The means of access and the performance of these operations depends on
+the container.
 
 ---
 # Standard library containers
@@ -40,12 +41,12 @@ The standard library has 13 container template classes, but we'll only touch on 
 -   (`unordered_`)`set` /  (`unordered_`)`map` 
 
 ---
-# vector - your new best friend
+# vector
 
 The size of the vector is determined at run time (and hence memory is
 allocated then)
 
-The elements are contiguous in memory, so it is fast to jump to any
+The elements are *contiguous in memory*, so it is fast to jump to any
 element by index and to iterate though them.
 
 ```C++
@@ -67,21 +68,21 @@ void ShowData() {
 Poorly named, but we're stuck: `std::vector` is not a vector in either
 the 3D spatial sense nor the vector space sense...
 
+We put the type of the elements inside the angle brackets
+
+Here we show a for loop that will iterate through every element of the vector
+
 Why does contiguous memory => fast? Because main memory is slow, chips
 have caches which bring lines of memory into small high speed bits of
 memory on chip. They also notice when you are running through a chunk
 of memory and pre-fetch (or the compiler does this)
 
-We put the type of the elements inside the angle brackets
-
-Here we show a for loop that will iterate through every element of the vector
-
 ---
-# vector - your new best friend
+# vector
 
 Supports:
 
--   copy
+-   copy and move (if element type is `noexcept` moveable)
 
 -   random element access by index
 
@@ -91,10 +92,10 @@ Supports:
 
 -   element deletion
 
-Note that when it reaches the end of its lifetime, contained elements
-will also be destroyed (i.e. it *owns* them).
+Note that it *owns* its elements: when it reaches the end of its
+lifetime, contained elements will also be destroyed.
 
-Also be aware that resizes may force reallocation and copying!
+Be aware that resizing operations may force reallocation and copying!
 
 ---
 # vector building
@@ -102,7 +103,9 @@ Also be aware that resizes may force reallocation and copying!
 ```C++
 std::vector<unsigned> first_n_primes(unsigned n) {
   std::vector<unsigned> ans;
-  unsigned maybe_prime = 0;
+
+  unsigned maybe_prime = 2;
+
   while (ans.size() < n) {
     if (is_prime(maybe_prime)) {
       ans.push_back(maybe_prime);
@@ -146,12 +149,13 @@ std::cout << p1.size() << std::endl;
 
 -   Elements are allocated one by one on the heap at run time.
 
--   Traversal requires 
+-   Traversal requires following pointers from one end
 
--   Fast element insertion and deletion (if you don't have to look for
+-   Fast element insertion and deletion (**if** you don't have to look for
     the element!)
 
-![:thumb](Use when you will be adding and removing from ends a lot and the contained objects are expensive to copy/move.
+![:thumb](Use when you will be adding and removing from the ends a lot
+ and the contained objects are expensive to copy/move.
 
 Consider converting to `vector` if you have a build/access pattern.)
 
@@ -159,14 +163,15 @@ Consider converting to `vector` if you have a build/access pattern.)
 # set and map
 
 -   These are associative containers implemented as sorted data
-    structures for rapid search.
+    structures for rapid search (typically red-black trees).
 
 -   `set` is just a set of keys, `map` is a set of key/value pairs
     (types can differ).
 
 -   You must have defined a comparison function for the key type.
 
--   You may want to use the `unordered` versions which use a hash table
+-   You may want to use the `unordered` versions which use a hash
+    table (requires a hash function)
 
 ![:thumb](Use if you either
 
@@ -228,7 +233,9 @@ Revisit computing primes
 ```C++
 std::vector<unsigned> first_n_primes(unsigned n) {
   std::vector<int> ans;
-  unsigned maybe_prime = 0;
+
+  unsigned maybe_prime = 2;
+
   while (ans.size() < n) {
       if (is_prime(maybe_prime)) {
       ans.push_back(maybe_prime);
@@ -390,11 +397,11 @@ Discuss `operator==`
 ---
 # Implementing your own iterator
 
-To define your own iterator, you need to create a class with several
+To define your own iterator, you need to create a type with several
 operator overloads (exactly which ones depends on the category of
-iterator you need).
+iterator you need). Basics are:
 
--   derefence operator (`*it`) - you have to be able to get a value
+-   dereference operator (`*it`) - you have to be able to get a value
     (either to read or write)
 
 -   pre-increment (`++it`) - you have to be able to go to the next
@@ -403,7 +410,7 @@ one
     value of `it` from *before* it was incremented. This usually means
     a copy.)
 
--   assigment - you need to bind it to name
+-   assigment - you need to be able to bind it to name
 
 -   inequality comparison (`it != end`) - you need to know when you are
 done
@@ -442,7 +449,7 @@ for (auto [rank, bc]: rank2comm) {
 Map takes two type parameters in the angle brackets: the key type and
 value type
 
-What's with the square brakets? It's a structured binding similar to
+What's with the square brackets? It's a structured binding similar to
 python's tuple unpacking
 
 ---
@@ -456,7 +463,7 @@ In your clone of this repository, find the `containers` exercise and list
 the files
 
 ```
-$ cd APT-CPP/exercises/complex
+$ cd APT-CPP/exercises/containers
 $ ls
 Makefile	test.cpp	vector_ex.cpp	vector_ex.hpp
 ```

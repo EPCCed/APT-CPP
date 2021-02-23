@@ -25,7 +25,8 @@ double sum(double a, double b) {
 }
 ```
 
-What if we need this for `float`, `unsigned`, and out `Complex` class?
+What if we need this for `float`, `unsigned`, and our `Complex` class
+from earlier lectures?
 
 Going to get boring and hard to maintain quickly!
 
@@ -37,7 +38,7 @@ Recall the sum functions from the first lecture
 # Template functions
 
 ```C++
-template<typename T>
+template <typename T>
 T sum(T a, T b) {
   return a+b;
 }
@@ -54,19 +55,19 @@ std::cout << "add floats=" << sum<float>(1.0f, 4e-2f) << std::endl;
 ???
 
 Here the compiler will replace every use of `T` with the type you
-supply and then it will compile it for you
+supply and only then will it compile the code
 
 ---
 # Template functions
 
 ```C++
-template<typename T>
+template <typename T>
 T sum(T a, T b) {
   return a+b;
 }
 ```
 
-You can also let the compiler do the deduction for you
+You can also let the compiler *deduce* what `T` is for you
 
 ```C++
 std::cout << "add unsigned=" << sum(1U, 4U) << endl;
@@ -75,13 +76,13 @@ std::cout << "add floats=" << sum(1.0f, 4e-2f) << endl;
 ???
 
 This is called implicit template instantiation - there are a few
-wrinkles that we'll talk about
+wrinkles that we'll talk about soon
 
 ---
 # Template classes
 
 You can define a template class - i.e. a template that will produce a
-class when you instatiate it.
+class when you instantiate it.
 
 Let's adapt our `dyn_array` container that to hold any type `T`
 
@@ -90,11 +91,12 @@ template<class T>
 class dyn_array {
   unsigned size = 0;
   T* data = nullptr;
+
 public:
-  dyn_array ();
-  dyn_array (unsigned n);
+  dyn_array();
+  dyn_array(unsigned n);
   // Copy / move?
-  ~dyn_array ();
+  ~dyn_array();
   unsigned size() const;
   const T& operator[](unsigned i) const;
   T& operator[](unsigned i);
@@ -135,6 +137,7 @@ template<class T>
 class dyn_array {
   unsigned size = 0;
   T* data = nullptr;
+
 public:
   using value_type = T;
   using reference = T&;
@@ -182,7 +185,7 @@ function declarations
 ---
 # Templates and the One Definition Rule
 
-So we said earlier that everything used had to be defined exactly once.
+So I said earlier that everything used had to be defined exactly once.
 
 This has two exceptions:
 
@@ -194,7 +197,8 @@ These can be repeated in many "translation units" (i.e. separate
 invocations of the compiler)
 
 At link time the linker will arbitrarily pick one definition to use in
-the final executable.
+the final executable (so you need to make sure that they are all
+identical).
 
 ---
 # Templates and type deduction
@@ -213,7 +217,7 @@ int x = 1, y = 2;
 auto z = sum(x, y);
 ```
 
-The compiler is doing template argument deduction.
+The compiler is doing *template argument deduction*.
 
 This means it examines the types of the expressions given as arguments
 to the function and then tries to choose a `T` such that the type of
@@ -226,16 +230,16 @@ Important to note that the template parameter `T` and the type of
 function arguments might be different (but related)
 
 ```C++
-template<class T>
+template <class T>
 void f(T x);
 
-template<class T>
+template <class T>
 void ref(T& x);
 
-template<class T>
+template <class T>
 void const_ref(T const& x);
 
-template<class T>
+template <class T>
 void forwarding_ref(T&& x);
 
 template <class T>
@@ -251,6 +255,7 @@ Can also parameterise template with non-types:
 - integers
 - pointers
 - enums
+- (and in C++20, floating point types and "literal types")
 
 E.g.:
 
@@ -279,11 +284,14 @@ Full rules are quite complex
 See Meyer's Effective Modern C++ chapter 1 - free online
 https://www.safaribooksonline.com/library/view/effective-modern-c/9781491908419/ch01.html
 
+In short:
 
 ![:thumb]( But usually you can ignore these and just think about:
 1. Whether you want to copy the argument or not  - if you don't want a
 copy add a reference `&`
-2. Whether you can handle a const argument - if so add a `const` qualifier)
+2. Whether you can handle a const argument - if so add a `const` qualifier
+3. If you want *exactly* the type of the expression - if so add `&&` -
+   this is known as a forwarding reference)
 
 ---
 # Auto
