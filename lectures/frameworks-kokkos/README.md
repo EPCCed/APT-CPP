@@ -106,7 +106,7 @@ Or at least close!
 Practical lab had an example of implementing a matrix template class
 with Morton order data layout:
 
-.center[![:scale_img 50%](mortonorder.pdf)]
+.center[![:scale_img 50%](mortonorder.png)]
 ---
 
 # C++ can help
